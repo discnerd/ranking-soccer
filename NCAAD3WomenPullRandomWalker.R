@@ -1,5 +1,3 @@
-#setwd("C:/Users/mr437799/Dropbox/Current/Data Projects/Football Ranking/Soccer 2015")
-#setwd("~/Dropbox/Current/Data Projects/Football Ranking/Soccer 2015")
 library(rvest)
 library(dplyr)
 library(Matrix)

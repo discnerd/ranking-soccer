@@ -1,12 +1,8 @@
-#setwd("C:/Users/mr437799/Dropbox/Current/Data Projects/Football Ranking/Soccer 2015")
-#setwd("~/Dropbox/Current/Data Projects/Football Ranking/Soccer 2015")
 library(rvest)
 library(dplyr)
 library(Matrix)
 
 teams <-read_html("http://www.d3soccer.com/teams/index-men")
-
-
 all_teams<-teams %>% html_nodes("td:nth-child(1) a") %>% html_text() 
 all_teams <-  gsub("^\\s+|\\s+$", "", all_teams)
 all_conferences <- teams %>% html_nodes(".roster td+ td a") %>% html_text()
