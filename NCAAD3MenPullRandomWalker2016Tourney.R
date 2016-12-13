@@ -24,7 +24,7 @@ if(length(results[,1])!=0){
   all_results <- setNames(data.frame(matrix(ncol=4, nrow=0)), c("Team1", "Score1", "Team2", "Score2"))
 }
 
-days<-format(seq(strptime("08/20/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
+days<-format(seq(strptime("08/20/12","%m/%d/%H"),strptime("11/10/16", "%m/%d/%H"),by="day"),"%Y-%m-%d")
 
 for(day in days){
   Sys.sleep(runif(1,1,2))
@@ -107,7 +107,7 @@ for( i in 1:1000){
 rankedteams<-data.frame(Team=all_teams, Rating=as.numeric(t(b)), Conference=all_conferences)
 rankedteams <-arrange(rankedteams, desc(Rating))
 
-write.csv(rankedteams, paste("D3 Men Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+write.csv(rankedteams, paste("D3 Men Soccer RW", "PreTournament",".csv",sep=""), row.names = TRUE)
 
 
 #Use Colley
@@ -148,4 +148,4 @@ Rating=solve(A,b)
 rankedteams<-data.frame(Team=all_teams, Rating=Rating, Conference=all_conferences)
 rankedteams <-arrange(rankedteams, desc(Rating))
 
-write.csv(rankedteams, paste("D3 Men Soccer Colley", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+write.csv(rankedteams, paste("D3 Men Soccer Colley", "PreTournament",".csv",sep=""), row.names = TRUE)
