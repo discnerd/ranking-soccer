@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(network)
+library(sna)
+library(ggnetwork)
+library(forcats)
+library(readr)
+```
+
+
+```{r MenRankings, include=FALSE}
+source("NCAAD3MenPullRandomWalker.R")
+```
+
+
+```{r setupMen}
+n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
+network.vertex.names(n) <- as.character(all_teams)
+n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
+n %v% "rating" <- arrange(rankedteams,match( Team, all_teams))$Rating
+n %v% "conference" <- as.character(all_conferences)
+
+network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("WinStrength"))
+
+```
+## Top 25
+```{r}
+
+#rankedteams %>% select(ranking, Team, Rating) %>% knitr::kable()
+
+rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+
+rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+
+rankedteams %>% filter(Team == "Loras")
+
+```
+
+## Game Network
+
+```{r plotNetwork}
+#net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(alpha=0.1)+
+  geom_nodes( aes(color=rating), alpha=0.5 ) +theme_blank()+
+  scale_color_gradient(low="purple", high="gold")#+
+#  geom_nodelabel_repel(aes(label=vertex.names))
+
+```
+
+```{r plottop25Men}
+net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+
+
+```
+
+
+```{r womensRankings, include=FALSE}
+source("NCAAD3WomenPullRandomWalker.R")
+```
+
+
+```{r setupWomen}
+n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
+network.vertex.names(n) <- as.character(all_teams)
+n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
+n %v% "rating" <- arrange(rankedteams,match( Team, all_teams))$Rating
+n %v% "conference" <- as.character(all_conferences)
+
+network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("WinStrength"))
+
+```
+## Top 25
+
+```{r}
+
+#rankedteams %>% select(ranking, Team, Rating) %>% knitr::kable()
+
+rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+
+rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+
+
+rankedteams %>% filter(Team=="Loras")
+
+
+
+```
+
+## Game Network
+
+```{r plotNetworkWomen}
+#net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(alpha=0.1)+
+  geom_nodes( aes(color=rating), alpha=0.5 ) +theme_blank()+
+  scale_color_gradient(low="purple", high="gold")#+
+#  geom_nodelabel_repel(aes(label=vertex.names))
+
+```
+
+
+
+```{r plottop25Women}
+net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+
+
+```

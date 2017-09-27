@@ -7,9 +7,11 @@ all_teams<-teams %>% html_nodes("td:nth-child(1) a") %>% html_text()
 all_teams <-  gsub("^\\s+|\\s+$", "", all_teams)
 all_conferences <- teams %>% html_nodes(".roster td+ td a") %>% html_text()
 
-root_html <- "http://www.d3soccer.com/seasons/men/2016/schedule?date="
-day<-"2016-08-19"
-scores <- read_html(paste0(root_html,day))
+root_html1 <- "http://www.d3soccer.com/action/browser-mode?u=%2Fseasons%2Fmen%2F2017%2Fschedule%3Fdate%3D"
+root_html2 <- "&m=1"
+
+day<-"2017-08-19"
+scores <- read_html(paste0(root_html1,day, root_html2))
 teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
 game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
 results<-data.frame(teams, game_scores)
@@ -27,11 +29,11 @@ if(length(results[,1])!=0){
 days<-format(seq(strptime("08/20/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
 
 for(day in days){
-  Sys.sleep(runif(1,1,2))
+  #Sys.sleep(runif(1,1,2))
   print(day)
 #  try(
     {
-    scores <- read_html(paste0(root_html,day))
+    scores <- read_html(paste0(root_html1,day,root_html2))
     teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
     game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
     results<-data.frame(teams, game_scores)
@@ -39,7 +41,7 @@ for(day in days){
       results<-bind_cols(slice(results, seq(1,length(results$teams),2)), slice(results, seq(2,length(results$teams),2)))
       names(results) <- c("Team1", "Score1", "Team2", "Score2")
       results<-results %>% 
-        filter((Team1 %in% all_teams) && (Team2 %in% all_teams)) %>% 
+        filter((Team1 %in% all_teams) & (Team2 %in% all_teams)) %>% 
         filter(!is.na(Score1)) %>% filter( !is.na(Score2) )
       all_results<-bind_rows(all_results,results)
     }
@@ -90,16 +92,18 @@ for(i in 1:length(all_results$Team1)){
     A[team2,team2]+Share2
 }
 
-
+A_unnormed <- A
 
 for(i in 1:length(all_teams)){
-  A[i,]=A[i,]/sum(A[i,])
+  if(sum(A[i,] !=0 )){
+    A[i,]=A[i,]/sum(A[i,])
+  }
 }
 
 
 library(expm)
 b=t(rep(1,length(all_teams)))
-for( i in 1:1000){
+for( i in 1:10000){
   b<-b%*%A
 }
 
@@ -107,45 +111,45 @@ for( i in 1:1000){
 rankedteams<-data.frame(Team=all_teams, Rating=as.numeric(t(b)), Conference=all_conferences)
 rankedteams <-arrange(rankedteams, desc(Rating))
 
-write.csv(rankedteams, paste("D3 Men Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+write.csv(rankedteams, paste("2017 Rankings/D3 Men Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
 
 
-#Use Colley
-A=matrix(rep(0,length(all_teams)^2),nrow=length(all_teams))
-b=rep(1,length(all_teams))
-diag(A)=rep(2,length(diag(A)))
-
-for(i in 1:length(all_results$Team1) ){
-  team1=match(all_results[i,]$Team1,all_teams)
-  team2=match(all_results[i,]$Team2,all_teams)
-  if( is.na(team1) | is.na(team2)){ next }
-  A[ team1 , team2 ]=A[ team1 , team2 ]-1;
-  A[ team2 , team1 ]=A[ team2 , team1 ]-1;
-  A[ team1 , team1 ]=A[ team1 , team1 ]+1;
-  A[ team2 , team2 ]=A[ team2 , team2 ]+1;
-  
-  if(abs(all_results$Score1[i]-all_results$Score2[i])<4){
-    Share1=shares[all_results$Score1[i]-all_results$Score2[i]+4]
-  }  else{
-    if(all_results$Score1[i]>all_results$Score2[i]){
-      Share1=1
-    } else{
-      Share1=0
-    }
-  }
-  
-  
-  Share2=-Share1
-  
-  
-  b[ team1 ]=b[ team1 ]- Share2
-  b[ team2 ]=b[ team2 ]- Share1
-}
-
-Rating=solve(A,b)
-
-
-rankedteams<-data.frame(Team=all_teams, Rating=Rating, Conference=all_conferences)
-rankedteams <-arrange(rankedteams, desc(Rating))
-
-write.csv(rankedteams, paste("D3 Men Soccer Colley", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+# #Use Colley
+# A=matrix(rep(0,length(all_teams)^2),nrow=length(all_teams))
+# b=rep(1,length(all_teams))
+# diag(A)=rep(2,length(diag(A)))
+# 
+# for(i in 1:length(all_results$Team1) ){
+#   team1=match(all_results[i,]$Team1,all_teams)
+#   team2=match(all_results[i,]$Team2,all_teams)
+#   if( is.na(team1) | is.na(team2)){ next }
+#   A[ team1 , team2 ]=A[ team1 , team2 ]-1;
+#   A[ team2 , team1 ]=A[ team2 , team1 ]-1;
+#   A[ team1 , team1 ]=A[ team1 , team1 ]+1;
+#   A[ team2 , team2 ]=A[ team2 , team2 ]+1;
+#   
+#   if(abs(all_results$Score1[i]-all_results$Score2[i])<4){
+#     Share1=shares[all_results$Score1[i]-all_results$Score2[i]+4]
+#   }  else{
+#     if(all_results$Score1[i]>all_results$Score2[i]){
+#       Share1=1
+#     } else{
+#       Share1=0
+#     }
+#   }
+#   
+#   
+#   Share2=-Share1
+#   
+#   
+#   b[ team1 ]=b[ team1 ]- Share2
+#   b[ team2 ]=b[ team2 ]- Share1
+# }
+# 
+# Rating=solve(A,b)
+# 
+# 
+# rankedteams<-data.frame(Team=all_teams, Rating=Rating, Conference=all_conferences)
+# rankedteams <-arrange(rankedteams, desc(Rating))
+# 
+# write.csv(rankedteams, paste("D3 Men Soccer Colley", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
