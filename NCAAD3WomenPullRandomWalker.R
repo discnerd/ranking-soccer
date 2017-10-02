@@ -48,7 +48,8 @@ for(day in days){
 
 
 
-
+save(all_results, all_teams, file=paste0("2017 Rankings/Women", format(Sys.time(),"%Y %m %d"),
+                                         ".Rdata"))
 
 
 
@@ -112,6 +113,7 @@ for( i in 1:10000){
 rankedteams<-data.frame(Team=all_teams, Rating=as.numeric(t(b)), Conference=all_conferences)
 rankedteams <- arrange(rankedteams, desc(Rating))
 
-write.csv(rankedteams, paste("2017 Rankings/D3 Women Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+write.csv(rankedteams, paste("2017 Rankings/D3 Women Soccer RW", 
+                             format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
 
 

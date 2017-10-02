@@ -1,8 +1,7 @@
-# R Notebook
+# D3 soccer Rankings
+`r format(Sys.time(), '%d %B, %Y')`  
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+ 
 
 
 
@@ -12,19 +11,14 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 
 ```r
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+n<-network.initialize(length(all_teams), directed = FALSE, multiple = FALSE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
-network.vertex.names(n) <- as.character(rankedteams$Team)
-n %v% "rank" <- rankedteams$ranking
-n %v% "rating" <- rankedteams$Rating
-n %v% "conference" <- as.character(rankedteams$Conference)
+network.vertex.names(n) <- as.character(all_teams)
+n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
+n %v% "rating" <- arrange(rankedteams,match( Team, all_teams))$Rating
+n %v% "conference" <- as.character(all_conferences)
 
-add.edges(n, 
-          parse_factor(all_results$Team1,as.character(rankedteams$Team)), 
-          parse_factor(all_results$Team2,as.character(rankedteams$Team)), 
-          names.eval = rep("PtDiff", nrow(all_results)), 
-          vals.eval = all_results %>% mutate(PtDiff= Score1 - Score2) %>%
-            .$PtDiff )
+network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("WinStrength"))
 ```
 ## Top 25
 
@@ -36,33 +30,33 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
 
 
- ranking  Team                     Rating  Conference 
---------  --------------------  ---------  -----------
-       1  Chicago                6.910181  UAA        
-       2  Johns Hopkins          5.898943  CC         
-       3  Calvin                 5.675315  MIAA       
-       4  Drew                   5.379360  LAND       
-       5  Trinity (Texas)        5.371924  SCAC       
-       6  Rowan                  5.329993  NJAC       
-       7  Carnegie Mellon        4.976060  UAA        
-       8  John Carroll           4.921824  OAC        
-       9  Lycoming               4.689400  MACC       
-      10  Messiah                4.637460  MACC       
-      11  Rutgers-Newark         4.599504  NJAC       
-      12  Kenyon                 3.700718  NCAC       
-      13  Washington and Lee     3.596234  ODAC       
-      14  Cortland State         3.589269  SUNYAC     
-      15  Redlands               3.374483  SCIAC      
-      16  Mary Hardin-Baylor     3.175975  ASC        
-      17  Ohio Wesleyan          3.139407  NCAC       
-      18  Haverford              3.064167  CC         
-      19  Oneonta State          3.021046  SUNYAC     
-      20  Puget Sound            2.974666  NWC        
-      21  Connecticut College    2.948518  NESCAC     
-      22  Transylvania           2.940746  HCAC       
-      23  Emory                  2.910845  UAA        
-      24  Texas-Tyler            2.891112  ASC        
-      25  Colorado College       2.710006  SCAC       
+ ranking  Team                      Rating  Conference 
+--------  ---------------------  ---------  -----------
+       1  Chicago                 6.387459  UAA        
+       2  Drew                    5.616397  LAND       
+       3  Rowan                   5.340627  NJAC       
+       4  Calvin                  5.173897  MIAA       
+       5  Trinity (Texas)         4.709997  SCAC       
+       6  Messiah                 4.510491  MACC       
+       7  Lycoming                4.420848  MACC       
+       8  Johns Hopkins           4.366126  CC         
+       9  John Carroll            4.349073  OAC        
+      10  Carnegie Mellon         4.342242  UAA        
+      11  Rutgers-Newark          4.306585  NJAC       
+      12  Cortland State          3.751193  SUNYAC     
+      13  Tufts                   3.723015  NESCAC     
+      14  Kenyon                  3.595755  NCAC       
+      15  Connecticut College     3.412176  NESCAC     
+      16  Redlands                3.330118  SCIAC      
+      17  Oneonta State           3.255746  SUNYAC     
+      18  Lebanon Valley          3.067752  MACC       
+      19  Springfield             2.953767  NEWMAC     
+      20  Lynchburg               2.908724  ODAC       
+      21  Mary Hardin-Baylor      2.893631  ASC        
+      22  North Park              2.879306  CCIW       
+      23  Gettysburg              2.771240  CC         
+      24  Texas-Tyler             2.697626  ASC        
+      25  St. Joseph's (Maine)    2.667293  GNAC       
 
 ```r
 rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -72,15 +66,15 @@ rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Con
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      54  Wartburg             1.9810832  IIAC       
-      91  Loras                1.5216706  IIAC       
-      99  Simpson              1.4545626  IIAC       
-     118  Luther               1.2733488  IIAC       
-     155  Dubuque              0.9722100  IIAC       
-     186  Central              0.8049129  IIAC       
-     325  Nebraska Wesleyan    0.2384509  IIAC       
-     347  Coe                  0.1683650  IIAC       
-     361  Buena Vista          0.1444229  IIAC       
+      60  Wartburg             1.8577194  IIAC       
+      80  Simpson              1.6348073  IIAC       
+     104  Luther               1.4157238  IIAC       
+     145  Central              1.0628338  IIAC       
+     153  Loras                1.0264488  IIAC       
+     199  Dubuque              0.7804019  IIAC       
+     277  Nebraska Wesleyan    0.3995934  IIAC       
+     318  Buena Vista          0.2629241  IIAC       
+     351  Coe                  0.1830870  IIAC       
 
 ```r
 rankedteams %>% filter(Team == "Loras")
@@ -88,7 +82,7 @@ rankedteams %>% filter(Team == "Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 1.521671       IIAC      91
+## 1 Loras 1.026449       IIAC     153
 ```
 
 ## Game Network
@@ -110,23 +104,37 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ```
 
 
+```r
+net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+```
+
+```
+## Warning: Ignoring unknown parameters: segment.color
+```
+
+![](PullAndNetwork_files/figure-html/plottop25Men-1.png)<!-- -->
+
+
+
 
 
 
 ```r
 n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
-network.vertex.names(n) <- as.character(rankedteams$Team)
-n %v% "rank" <- rankedteams$ranking
-n %v% "rating" <- rankedteams$Rating
-n %v% "conference" <- as.character(rankedteams$Conference)
+network.vertex.names(n) <- as.character(all_teams)
+n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
+n %v% "rating" <- arrange(rankedteams,match( Team, all_teams))$Rating
+n %v% "conference" <- as.character(all_conferences)
 
-add.edges(n, 
-          parse_factor(all_results$Team1,as.character(rankedteams$Team)), 
-          parse_factor(all_results$Team2,as.character(rankedteams$Team)), 
-          names.eval = rep("PtDiff", nrow(all_results)), 
-          vals.eval = all_results %>% mutate(PtDiff= Score1 - Score2) %>%
-            .$PtDiff )
+network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("WinStrength"))
 ```
 ## Top 25
 
@@ -141,31 +149,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                      Rating  Conference 
 --------  --------------------  ----------  -----------
-       1  TCNJ                   23.063553  NJAC       
-       2  Chicago                19.697182  UAA        
-       3  Johns Hopkins          10.309078  CC         
-       4  Christopher Newport     9.661070  CAC        
-       5  Hardin-Simmons          7.322851  ASC        
-       6  Messiah                 7.080575  MACC       
-       7  MIT                     6.997804  NEWMAC     
-       8  Western Connecticut     6.901701  LEC        
-       9  Geneseo State           6.850464  SUNYAC     
-      10  Hope                    6.817682  MIAA       
-      11  William Smith           6.503505  LL         
-      12  Washington U.           6.133604  UAA        
-      13  Emory                   5.704262  UAA        
-      14  Trinity (Texas)         5.298850  SCAC       
-      15  Swarthmore              5.261781  CC         
-      16  Williams                4.901902  NESCAC     
-      17  Loras                   4.568371  IIAC       
-      18  Carnegie Mellon         4.447589  UAA        
-      19  Illinois Wesleyan       4.092019  CCIW       
-      20  UW-La Crosse            3.959628  WIAC       
-      21  St. Thomas              3.921994  MIAC       
-      22  Stevens                 3.585179  E8         
-      23  Pacific Lutheran        3.580193  NWC        
-      24  New York University     3.527925  UAA        
-      25  UW-Whitewater           3.491159  WIAC       
+       1  TCNJ                   25.129242  NJAC       
+       2  Chicago                15.495893  UAA        
+       3  Christopher Newport     8.569766  CAC        
+       4  Johns Hopkins           8.107610  CC         
+       5  Washington U.           7.485769  UAA        
+       6  Hope                    6.678503  MIAA       
+       7  Hardin-Simmons          6.566498  ASC        
+       8  Messiah                 6.411287  MACC       
+       9  MIT                     6.246330  NEWMAC     
+      10  Williams                6.091171  NESCAC     
+      11  William Smith           5.807451  LL         
+      12  Geneseo State           5.703525  SUNYAC     
+      13  Trinity (Texas)         5.316593  SCAC       
+      14  Loras                   4.965232  IIAC       
+      15  Emory                   4.572391  UAA        
+      16  Western Connecticut     4.528829  LEC        
+      17  Carnegie Mellon         4.275072  UAA        
+      18  Wheaton (Ill.)          4.214751  CCIW       
+      19  UW-La Crosse            4.115985  WIAC       
+      20  Swarthmore              3.890943  CC         
+      21  UW-Whitewater           3.760338  WIAC       
+      22  Illinois Wesleyan       3.527344  CCIW       
+      23  St. Thomas              3.394513  MIAC       
+      24  Rowan                   3.297814  NJAC       
+      25  Connecticut College     3.206989  NESCAC     
 
 ```r
 rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -175,15 +183,15 @@ rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Con
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      17  Loras                4.5683708  IIAC       
-      35  Wartburg             2.7396117  IIAC       
-      50  Coe                  2.1269000  IIAC       
-      53  Central              1.9850877  IIAC       
-     123  Luther               1.0979238  IIAC       
-     193  Dubuque              0.5466503  IIAC       
-     257  Nebraska Wesleyan    0.2830530  IIAC       
-     327  Simpson              0.0727715  IIAC       
-     361  Buena Vista          0.0294158  IIAC       
+      14  Loras                4.9652322  IIAC       
+      27  Central              3.1113500  IIAC       
+      28  Wartburg             3.1107764  IIAC       
+     115  Coe                  1.2279044  IIAC       
+     154  Luther               0.9315033  IIAC       
+     186  Dubuque              0.6841741  IIAC       
+     288  Nebraska Wesleyan    0.1867916  IIAC       
+     304  Simpson              0.1410771  IIAC       
+     343  Buena Vista          0.0733725  IIAC       
 
 ```r
 rankedteams %>% filter(Team=="Loras")
@@ -191,7 +199,7 @@ rankedteams %>% filter(Team=="Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 4.568371       IIAC      17
+## 1 Loras 4.965232       IIAC      14
 ```
 
 ## Game Network
@@ -211,3 +219,23 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ```r
 #  geom_nodelabel_repel(aes(label=vertex.names))
 ```
+
+
+
+
+```r
+net<-ggnetwork(n %s% which( n %v% "rank" < 26), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+```
+
+```
+## Warning: Ignoring unknown parameters: segment.color
+```
+
+![](PullAndNetwork_files/figure-html/plottop25Women-1.png)<!-- -->

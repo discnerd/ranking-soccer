@@ -1,13 +1,12 @@
 ---
-title: "R Notebook"
+title: "D3 soccer Rankings"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: 
     keep_md: yes
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+ 
 
 ```{r setup, include=FALSE}
 library(tidyverse)
@@ -25,7 +24,7 @@ source("NCAAD3MenPullRandomWalker.R")
 
 
 ```{r setupMen}
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+n<-network.initialize(length(all_teams), directed = FALSE, multiple = FALSE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
