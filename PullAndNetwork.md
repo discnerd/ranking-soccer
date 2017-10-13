@@ -32,31 +32,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                      Rating  Conference 
 --------  ---------------------  ---------  -----------
-       1  Chicago                 6.387459  UAA        
-       2  Drew                    5.616397  LAND       
-       3  Rowan                   5.340627  NJAC       
-       4  Calvin                  5.173897  MIAA       
-       5  Trinity (Texas)         4.709997  SCAC       
-       6  Messiah                 4.510491  MACC       
-       7  Lycoming                4.420848  MACC       
-       8  Johns Hopkins           4.366126  CC         
-       9  John Carroll            4.349073  OAC        
-      10  Carnegie Mellon         4.342242  UAA        
-      11  Rutgers-Newark          4.306585  NJAC       
-      12  Cortland State          3.751193  SUNYAC     
-      13  Tufts                   3.723015  NESCAC     
-      14  Kenyon                  3.595755  NCAC       
-      15  Connecticut College     3.412176  NESCAC     
-      16  Redlands                3.330118  SCIAC      
-      17  Oneonta State           3.255746  SUNYAC     
-      18  Lebanon Valley          3.067752  MACC       
-      19  Springfield             2.953767  NEWMAC     
-      20  Lynchburg               2.908724  ODAC       
-      21  Mary Hardin-Baylor      2.893631  ASC        
-      22  North Park              2.879306  CCIW       
-      23  Gettysburg              2.771240  CC         
-      24  Texas-Tyler             2.697626  ASC        
-      25  St. Joseph's (Maine)    2.667293  GNAC       
+       1  Messiah                 5.731043  MACC       
+       2  Rowan                   4.793266  NJAC       
+       3  Lycoming                4.783010  MACC       
+       4  Drew                    4.637748  LAND       
+       5  Calvin                  4.528590  MIAA       
+       6  Tufts                   4.408126  NESCAC     
+       7  Trinity (Texas)         4.085389  SCAC       
+       8  Johns Hopkins           3.945631  CC         
+       9  Lynchburg               3.891884  ODAC       
+      10  Springfield             3.872557  NEWMAC     
+      11  Chicago                 3.804972  UAA        
+      12  Connecticut College     3.635246  NESCAC     
+      13  Cortland State          3.623793  SUNYAC     
+      14  Rutgers-Newark          3.603253  NJAC       
+      15  John Carroll            3.587357  OAC        
+      16  Emory                   3.466131  UAA        
+      17  Brandeis                3.443969  UAA        
+      18  North Park              3.177998  CCIW       
+      19  Kenyon                  3.076622  NCAC       
+      20  Carnegie Mellon         3.002427  UAA        
+      21  Oglethorpe              2.999867  SAA        
+      22  Oneonta State           2.920086  SUNYAC     
+      23  St. Joseph's (Maine)    2.899818  GNAC       
+      24  Gettysburg              2.827562  CC         
+      25  Mary Washington         2.742843  CAC        
 
 ```r
 rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -66,15 +66,15 @@ rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Con
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      60  Wartburg             1.8577194  IIAC       
-      80  Simpson              1.6348073  IIAC       
-     104  Luther               1.4157238  IIAC       
-     145  Central              1.0628338  IIAC       
-     153  Loras                1.0264488  IIAC       
-     199  Dubuque              0.7804019  IIAC       
-     277  Nebraska Wesleyan    0.3995934  IIAC       
-     318  Buena Vista          0.2629241  IIAC       
-     351  Coe                  0.1830870  IIAC       
+      95  Simpson              1.4687990  IIAC       
+      96  Wartburg             1.4595503  IIAC       
+     114  Luther               1.3183445  IIAC       
+     138  Loras                1.1249316  IIAC       
+     156  Central              1.0309861  IIAC       
+     191  Dubuque              0.8474338  IIAC       
+     243  Nebraska Wesleyan    0.5751819  IIAC       
+     335  Buena Vista          0.2533235  IIAC       
+     364  Coe                  0.1611151  IIAC       
 
 ```r
 rankedteams %>% filter(Team == "Loras")
@@ -82,7 +82,7 @@ rankedteams %>% filter(Team == "Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 1.026449       IIAC     153
+## 1 Loras 1.124932       IIAC     138
 ```
 
 ## Game Network
@@ -149,31 +149,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                      Rating  Conference 
 --------  --------------------  ----------  -----------
-       1  TCNJ                   25.129242  NJAC       
-       2  Chicago                15.495893  UAA        
-       3  Christopher Newport     8.569766  CAC        
-       4  Johns Hopkins           8.107610  CC         
-       5  Washington U.           7.485769  UAA        
-       6  Hope                    6.678503  MIAA       
-       7  Hardin-Simmons          6.566498  ASC        
-       8  Messiah                 6.411287  MACC       
-       9  MIT                     6.246330  NEWMAC     
-      10  Williams                6.091171  NESCAC     
-      11  William Smith           5.807451  LL         
-      12  Geneseo State           5.703525  SUNYAC     
-      13  Trinity (Texas)         5.316593  SCAC       
-      14  Loras                   4.965232  IIAC       
-      15  Emory                   4.572391  UAA        
-      16  Western Connecticut     4.528829  LEC        
-      17  Carnegie Mellon         4.275072  UAA        
-      18  Wheaton (Ill.)          4.214751  CCIW       
-      19  UW-La Crosse            4.115985  WIAC       
-      20  Swarthmore              3.890943  CC         
-      21  UW-Whitewater           3.760338  WIAC       
-      22  Illinois Wesleyan       3.527344  CCIW       
-      23  St. Thomas              3.394513  MIAC       
-      24  Rowan                   3.297814  NJAC       
-      25  Connecticut College     3.206989  NESCAC     
+       1  Chicago                23.026422  UAA        
+       2  TCNJ                   11.380918  NJAC       
+       3  Christopher Newport     8.439806  CAC        
+       4  Washington U.           7.550164  UAA        
+       5  Williams                6.407291  NESCAC     
+       6  William Smith           6.373152  LL         
+       7  MIT                     6.352211  NEWMAC     
+       8  Hardin-Simmons          6.104582  ASC        
+       9  Geneseo State           5.819582  SUNYAC     
+      10  UW-La Crosse            5.801070  WIAC       
+      11  Messiah                 5.686621  MACC       
+      12  Trinity (Texas)         5.371953  SCAC       
+      13  Hope                    5.203240  MIAA       
+      14  Loras                   5.067532  IIAC       
+      15  Wheaton (Ill.)          5.057429  CCIW       
+      16  Johns Hopkins           4.848980  CC         
+      17  Illinois Wesleyan       4.611852  CCIW       
+      18  Connecticut College     4.545188  NESCAC     
+      19  Carnegie Mellon         3.970259  UAA        
+      20  St. Thomas              3.957437  MIAC       
+      21  Brandeis                3.495653  UAA        
+      22  Western Connecticut     3.455829  LEC        
+      23  Swarthmore              3.407231  CC         
+      24  Misericordia            3.345300  MACF       
+      25  Lynchburg               3.336250  ODAC       
 
 ```r
 rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -183,15 +183,15 @@ rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Con
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      14  Loras                4.9652322  IIAC       
-      27  Central              3.1113500  IIAC       
-      28  Wartburg             3.1107764  IIAC       
-     115  Coe                  1.2279044  IIAC       
-     154  Luther               0.9315033  IIAC       
-     186  Dubuque              0.6841741  IIAC       
-     288  Nebraska Wesleyan    0.1867916  IIAC       
-     304  Simpson              0.1410771  IIAC       
-     343  Buena Vista          0.0733725  IIAC       
+      14  Loras                5.0675317  IIAC       
+      27  Wartburg             3.2855604  IIAC       
+      54  Central              2.1302728  IIAC       
+     100  Coe                  1.3697197  IIAC       
+     133  Dubuque              1.0895673  IIAC       
+     139  Luther               1.0773803  IIAC       
+     274  Nebraska Wesleyan    0.2613453  IIAC       
+     291  Simpson              0.2009545  IIAC       
+     346  Buena Vista          0.0778083  IIAC       
 
 ```r
 rankedteams %>% filter(Team=="Loras")
@@ -199,7 +199,7 @@ rankedteams %>% filter(Team=="Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 4.965232       IIAC      14
+## 1 Loras 5.067532       IIAC      14
 ```
 
 ## Game Network
