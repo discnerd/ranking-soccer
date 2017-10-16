@@ -27,9 +27,10 @@ if(length(results[,1])!=0){
 days<-format(seq(strptime("08/20/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
 
 for(day in days){
-#  Sys.sleep(runif(1,1,2))
+ Sys.sleep(runif(1,1,2))
   print(day)
-  try({
+#  try(
+    {
     scores <- read_html(paste0(root_html1,day, root_html2))
     teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
     game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
@@ -42,7 +43,8 @@ for(day in days){
         filter(!is.na(Score1)) %>% filter( !is.na(Score2) )
       all_results<-bind_rows(all_results,results)
     }
-  })
+  }
+  #)
 #  cat(unlist(results))
 }
 

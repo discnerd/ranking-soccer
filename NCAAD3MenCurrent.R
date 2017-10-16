@@ -29,7 +29,7 @@ if(length(results[,1])!=0){
 days<-format(seq(strptime("08/20/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
 
 for(day in days){
-  #Sys.sleep(runif(1,1,2))
+  Sys.sleep(runif(1,1,2))
   print(day)
 #  try(
     {
