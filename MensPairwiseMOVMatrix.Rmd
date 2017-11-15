@@ -11,7 +11,7 @@ library(tidyverse)
 library(Matrix)
 ```
 ```{r}
-load("2017 Rankings/Men2017 11 07.Rdata")
+load("2017 Rankings/Men2017 11 14.Rdata")
 source('C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-basketball/MarginPredictionFromCenter.R')
 
 A=sparseMatrix(seq(1,length(all_teams)),seq(1,length(all_teams)),x=0)
@@ -101,14 +101,14 @@ rankedteams   %>%
 
 ```{r}
 bids <- 1
-indices <- c(259, 374, 395, 265, 256, 383, 211,
-             340, 375, 193, 48, 271, 221, 175, 362,
-             66, 183, 95, 51, 166, 267, 50, 361, 
-             197, 275, 94, 111, 365, 358, 210, 405,
-             366, 334, 232, 307, 46, 168, 93,
-             196, 189, 124, 96, 37, 392, 310, 36,
-             224,  57,  45, 152, 83, 240, 226, 343,
-             269, 415, 302, 81, 10, 313, 328, 113
+indices <- c(259, 383, 
+             340, 271, 
+             66, 50, 
+             111, 210,
+             366, 168,
+             96, 37,
+             224, 343,
+             302, 10
              )
 
 #indices <- c(48,155,,,,,54,,,,,140,181,293,132,,)
@@ -165,7 +165,7 @@ rownames(MOV) <-all_teams[indices]
 colnames(MOV) <-all_teams[indices]
 #print(xtable::xtable(MOV), type="html")
 MOV
-save(MOV, file="MensTournamentMOV.Rdata")
+save(MOV, file="MensTournament3rdRoundMOV.Rdata")
 
 ```
 
@@ -173,50 +173,50 @@ save(MOV, file="MensTournamentMOV.Rdata")
 library(readxl)
 library(tidyverse)
 SoccerD3MenTournament <- read_excel("C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-soccer/SoccerD3MenTournament.xlsx")
-tourneyTeams<-SoccerD3MenTournament %>% separate(Bracket, c("Region", "Spot"),1) %>% select(-`62`) %>% select(Team, Region, Spot) %>% left_join(rankedteams) %>% filter(!is.na(Region))  %>% mutate(Spot=as.integer(Spot)) %>% arrange(Region, Spot)
+tourneyTeams<-SoccerD3MenTournament %>% separate(Bracket, c("Region", "Spot"),1) %>% select(-`62`) %>% select(Team, Region, Spot) %>% right_join(rankedteams %>% filter(Index %in% indices)) %>% filter(!is.na(Region))  %>% mutate(Spot=as.integer(Spot)) %>% arrange(Region, Spot)
 
-tourneyTeams <- tourneyTeams %>% mutate( Round1=rep(1,nrow(tourneyTeams))) 
+tourneyTeams <- tourneyTeams %>% mutate( Round3=rep(1,nrow(tourneyTeams))) 
 
-for(i in 1:length(tourneyTeams$Team)){
-  if(tourneyTeams$Team[i] %in% c("North Park", "Tufts")){
-    tourneyTeams$Round2[i] = 1
-  } else{
-    teams = tourneyTeams %>% 
-      filter(Region == Region[i], 
-             (Spot-1) %/%2 == (Spot[i]-1) %/%2 , 
-             Team != Team[i]) %>%
-      .$Team
-    
-    tourneyTeams$Round2[i] = 1
-    for( team in teams){
-      tourneyTeams$Round2[i] = tourneyTeams$Round2[i]*
-        shares[length(shares)/2+1+
-                 MOV[which(rownames(MOV)==team),
-                     which(rownames(MOV)==tourneyTeams$Team[i])]]
-    }
-  }
-}
-
-
-for(i in 1:length(tourneyTeams$Team)){
-  
-  teams = tourneyTeams %>% 
-    filter(Region == Region[i], 
-           (Spot-1) %/%4 == (Spot[i]-1) %/%4 , 
-           (Spot-1) %/%2 != (Spot[i]-1) %/%2,
-           Team != Team[i]) %>%
-    .$Team
-  
-  tourneyTeams$Round3[i] = 0
-  for( team in teams){
-    tourneyTeams$Round3[i] = tourneyTeams$Round3[i]+
-      shares[length(shares)/2+1+
-               MOV[which(rownames(MOV)==team),
-                   which(rownames(MOV)==tourneyTeams$Team[i])]]*
-      tourneyTeams$Round2[which(tourneyTeams$Team==team)]
-  }
-  tourneyTeams$Round3[i] = tourneyTeams$Round3[i]*tourneyTeams$Round2[i]
-}
+# for(i in 1:length(tourneyTeams$Team)){
+#   if(tourneyTeams$Team[i] %in% c("North Park", "Tufts")){
+#     tourneyTeams$Round2[i] = 1
+#   } else{
+#     teams = tourneyTeams %>% 
+#       filter(Region == Region[i], 
+#              (Spot-1) %/%2 == (Spot[i]-1) %/%2 , 
+#              Team != Team[i]) %>%
+#       .$Team
+#     
+#     tourneyTeams$Round2[i] = 1
+#     for( team in teams){
+#       tourneyTeams$Round2[i] = tourneyTeams$Round2[i]*
+#         shares[length(shares)/2+1+
+#                  MOV[which(rownames(MOV)==team),
+#                      which(rownames(MOV)==tourneyTeams$Team[i])]]
+#     }
+#   }
+# }
+# 
+# 
+# for(i in 1:length(tourneyTeams$Team)){
+#   
+#   teams = tourneyTeams %>% 
+#     filter(Region == Region[i], 
+#            (Spot-1) %/%4 == (Spot[i]-1) %/%4 , 
+#            (Spot-1) %/%2 != (Spot[i]-1) %/%2,
+#            Team != Team[i]) %>%
+#     .$Team
+#   
+#   tourneyTeams$Round3[i] = 0
+#   for( team in teams){
+#     tourneyTeams$Round3[i] = tourneyTeams$Round3[i]+
+#       shares[length(shares)/2+1+
+#                MOV[which(rownames(MOV)==team),
+#                    which(rownames(MOV)==tourneyTeams$Team[i])]]*
+#       tourneyTeams$Round2[which(tourneyTeams$Team==team)]
+#   }
+#   tourneyTeams$Round3[i] = tourneyTeams$Round3[i]*tourneyTeams$Round2[i]
+# }
 
 for(i in 1:length(tourneyTeams$Team)){
   
@@ -304,7 +304,7 @@ for(i in 1:length(tourneyTeams$Team)){
 ```
 
 ```{r}
-tourneyTeams %>% select(-Region, -Spot, -Index, -Round1) %>% 
+tourneyTeams %>% select(-Region, -Spot, -Index, -Round3) %>% 
   arrange(desc(Champs)) %>% knitr::kable()
 ```
 
