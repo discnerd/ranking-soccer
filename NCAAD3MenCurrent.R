@@ -48,7 +48,7 @@ for(day in days){
   }#)
 }
 
-save(all_results, all_teams, file=paste0("2017 Rankings/Men", format(Sys.time(),"%Y %m %d"),
+save(all_results, all_teams, all_conferences, file=paste0("2017 Rankings/Men", format(Sys.time(),"%Y %m %d"),
                                          ".Rdata"))
 
 
