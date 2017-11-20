@@ -11,7 +11,7 @@ library(tidyverse)
 library(Matrix)
 ```
 ```{r}
-load("2017 Rankings/Men2017 11 14.Rdata")
+load("2017 Rankings/Men2017 11 20.Rdata")
 source('C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-basketball/MarginPredictionFromCenter.R')
 
 A=sparseMatrix(seq(1,length(all_teams)),seq(1,length(all_teams)),x=0)
@@ -101,14 +101,10 @@ rankedteams   %>%
 
 ```{r}
 bids <- 1
-indices <- c(259, 383, 
-             340, 271, 
-             66, 50, 
-             111, 210,
-             366, 168,
-             96, 37,
-             224, 343,
-             302, 10
+indices <- c(259,  
+             66, 
+             37,
+             224
              )
 
 #indices <- c(48,155,,,,,54,,,,,140,181,293,132,,)
@@ -136,12 +132,12 @@ e <- b
 rankedteams   %>% 
   
   mutate(Ranking=min_rank(desc(Rating)))%>%
-  filter(Index %in% indices) #%>%
+  filter(Index %in% indices) %>%
 #  arrange( Index) %>% 
  # arrange( order(indices)) %>%
   #mutate(Seed = row_number()) %>%  
-  #select(Seed, Team, Ranking, Rating, Wins, Losses )  %>% 
-  #knitr::kable()
+  select( Team, Ranking, Rating )  %>% 
+  knitr::kable()
 ```
 ```{r}
 

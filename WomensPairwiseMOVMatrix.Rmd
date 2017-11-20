@@ -11,7 +11,7 @@ library(tidyverse)
 library(Matrix)
 ```
 ```{r}
-load("2017 Rankings/Women2017 11 14.Rdata")
+load("2017 Rankings/Women2017 11 20.Rdata")
 source('C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-basketball/MarginPredictionFromCenter.R')
 
 A=sparseMatrix(seq(1,length(all_teams)),seq(1,length(all_teams)),x=0)
@@ -101,14 +101,10 @@ rankedteams   %>%
 
 ```{r}
 bids <- 1
-indices <- c(71,  421,
-             407, 392,
-             371, 201,
-             228, 236,
-             432, 274, 
-             56, 149,
-             433, 51, 
-             171,  132
+indices <- c(71,  
+             371, 
+             149,
+             433 
              )
 
 
@@ -140,9 +136,9 @@ for( i in 1:(length(indices)-1)){
 ```{r }
 rownames(MOV) <-all_teams[indices]
 colnames(MOV) <-all_teams[indices]
-#print(xtable::xtable(MOV), type="html")
-MOV
-save(MOV, file="WomensTournament3rdRoundMOV.Rdata")
+print(xtable::xtable(MOV), type="html")
+#MOV
+save(MOV, file="WomensTournamentFinalFourMOV.Rdata")
 
 ```
 
