@@ -7,10 +7,10 @@ all_teams<-teams %>% html_nodes("td:nth-child(1) a") %>% html_text()
 all_teams <-  gsub("^\\s+|\\s+$", "", all_teams)
 all_conferences <- teams %>% html_nodes(".roster td+ td a") %>% html_text()
 
-root_html1 <- "http://www.d3soccer.com/action/browser-mode?u=%2Fseasons%2Fmen%2F2017%2Fschedule%3Fdate%3D"
+root_html1 <- "http://www.d3soccer.com/action/browser-mode?u=%2Fseasons%2Fmen%2F2018%2Fschedule%3Fdate%3D"
 root_html2 <- "&m=1"
 
-day<-"2017-08-19"
+day<-"2018-08-19"
 scores <- read_html(paste0(root_html1,day, root_html2))
 teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
 game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
@@ -48,7 +48,7 @@ for(day in days){
   }#)
 }
 
-save(all_results, all_teams, all_conferences, file=paste0("2017 Rankings/Men", format(Sys.time(),"%Y %m %d"),
+save(all_results, all_teams, all_conferences, file=paste0("2018 Rankings/Men", format(Sys.time(),"%Y %m %d"),
                                          ".Rdata"))
 
 

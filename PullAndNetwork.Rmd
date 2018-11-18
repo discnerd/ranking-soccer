@@ -41,7 +41,7 @@ network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("W
 
 rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
 
-rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
 
 rankedteams %>% filter(Team == "Loras")
 
@@ -98,7 +98,7 @@ network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("W
 
 rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
 
-rankedteams %>% filter(Conference=="IIAC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
+rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
 
 
 rankedteams %>% filter(Team=="Loras")
