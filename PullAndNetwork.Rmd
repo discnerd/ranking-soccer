@@ -6,6 +6,8 @@ output:
     keep_md: yes
 ---
 
+
+# Men
  
 
 ```{r setup, include=FALSE}
@@ -72,7 +74,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 
 
 ```
-
+# Women
 
 ```{r womensRankings, include=FALSE}
 source("NCAAD3WomenPullRandomWalker.R")

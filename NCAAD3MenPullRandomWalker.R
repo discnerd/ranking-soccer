@@ -1,5 +1,5 @@
 library(rvest)
-library(dplyr)
+library(tidyverse)
 library(Matrix)
 
 teams <-read_html("http://www.d3soccer.com/teams/index-men")
@@ -7,48 +7,53 @@ all_teams<-teams %>% html_nodes("td:nth-child(1) a") %>% html_text()
 all_teams <-  gsub("^\\s+|\\s+$", "", all_teams)
 all_conferences <- teams %>% html_nodes(".roster td+ td a") %>% html_text()
 
-root_html1 <- "http://www.d3soccer.com/action/browser-mode?u=%2Fseasons%2Fmen%2F2018%2Fschedule%3Fdate%3D"
-root_html2 <- "&m=1"
+root_html <- "https://d3soccer.prestosports.com/seasons/men/2019/schedule?date="
 
-day<-"2018-08-19"
-scores <- read_html(paste0(root_html1,day, root_html2))
-teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
-game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
-results<-data.frame(teams, game_scores)
-if(length(results[,1])!=0){
-  results<-bind_cols(slice(results, seq(1,length(results$teams),2)), slice(results, seq(2,length(results$teams),2)))
-  names(results) <- c("Team1", "Score1", "Team2", "Score2")
-  results<-results %>% 
-    filter((Team1 %in% all_teams) && (Team2 %in% all_teams)) %>% 
-    filter(!is.na(Score1)) %>% filter( !is.na(Score2) )
-  all_results<-results
-} else{
-  all_results <- setNames(data.frame(matrix(ncol=4, nrow=0)), c("Team1", "Score1", "Team2", "Score2"))
-}
+day<-"2019-08-30"
+scores <- read_html(paste0(root_html,day))
+game_scores<-scores %>% html_nodes(".schedule-filter table") %>% html_table(header=TRUE) %>% .[[1]]
+names(game_scores) <- c("Team1", "Score1", "Team2", "Score2", "TimeStatus", "Links")
+game_scores %>% select(c("Team1", "Score1", "Team2", "Score2")) %>% 
+  mutate_at(vars(contains("Score")), parse_integer) %>% 
+  mutate(Team2 = str_remove(Team2, "No. [0-9]*"), 
+         Team2 = str_trim(Team2),
+         Team1 = str_remove(Team1, "No. [0-9]*"), 
+         Team1 = str_trim(Team1)) %>%
+  filter(!is.na(Score1) & !is.na(Score2)) -> all_results
 
-days<-format(seq(strptime("08/20/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
+days<-format(seq(strptime("08/31/12","%m/%d/%H"),Sys.time(),by="day"),"%Y-%m-%d")
 
-for(day in days){
+for(day in days) {
   #Sys.sleep(runif(1,1,2))
   print(day)
-#  try(
-    {
-    scores <- read_html(paste0(root_html1,day,root_html2))
-    teams<-scores %>% html_nodes(".conf-teams-container .opponent") %>% html_text()
-    game_scores<-scores %>% html_nodes(".conf-teams-container .result") %>% html_text() %>% as.numeric()
-    results<-data.frame(teams, game_scores)
-    if(length(results[,1])!=0){
-      results<-bind_cols(slice(results, seq(1,length(results$teams),2)), slice(results, seq(2,length(results$teams),2)))
-      names(results) <- c("Team1", "Score1", "Team2", "Score2")
-      results<-results %>% 
-        filter((Team1 %in% all_teams) & (Team2 %in% all_teams)) %>% 
-        filter(!is.na(Score1)) %>% filter( !is.na(Score2) )
-      all_results<-bind_rows(all_results,results)
-    }
-  }#)
+  
+  
+  scores <- read_html(paste0(root_html, day))
+  game_scores <-
+    scores %>% html_nodes(".schedule-filter table") %>% 
+    html_table(header = TRUE) %>% .[[1]]
+  names(game_scores) <-
+    c("Team1", "Score1", "Team2", "Score2", "TimeStatus", "Links")
+  
+  game_scores %>% select(c("Team1", "Score1", "Team2", "Score2")) %>%
+    
+    mutate(
+      Team2 = str_remove(Team2, "No. [0-9]*"),
+      Team2 = str_trim(Team2),
+      Team1 = str_remove(Team1, "No. [0-9]*"),
+      Team1 = str_trim(Team1)
+    )  -> results
+  if(!is.integer(results$Score1)){
+    results %>% mutate_at(vars(contains("Score")), parse_number) -> results
+  }
+  results %>% filter(!is.na(Score1) & !is.na(Score2)) ->results
+  
+  all_results <- bind_rows(all_results, results)
+  
+  
 }
 
-save(all_results, all_teams, file=paste0("2018 Rankings/Men", format(Sys.time(),"%Y %m %d"),
+save(all_results, all_teams, file=paste0("2019 Rankings/Men", format(Sys.time(),"%Y %m %d"),
                                          ".Rdata"))
 
 
@@ -111,7 +116,7 @@ for( i in 1:10000){
 rankedteams<-data.frame(Team=all_teams, Rating=as.numeric(t(b)), Conference=all_conferences)
 rankedteams <-arrange(rankedteams, desc(Rating))
 
-write.csv(rankedteams, paste("2018 Rankings/D3 Men Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
+write.csv(rankedteams, paste("2019 Rankings/D3 Men Soccer RW", format(Sys.time(),"%Y %m %d"),".csv",sep=""), row.names = TRUE)
 
 
 # #Use Colley
