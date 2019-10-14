@@ -26,7 +26,7 @@ source("NCAAD3MenPullRandomWalker.R")
 
 
 ```{r setupMen}
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = FALSE)
+n<-network.initialize(length(all_teams), directed = TRUE, multiple = FALSE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
@@ -58,7 +58,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
   geom_edges(alpha=0.1)+
   geom_nodes( aes(color=rating), alpha=0.5 ) +theme_blank()+
   scale_color_gradient(low="purple", high="gold")#+
-#  geom_nodelabel_repel(aes(label=vertex.names))
+#  geom_nodetext(aes(label=vertex.names))
 
 ```
 
@@ -74,6 +74,21 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 
 
 ```
+
+
+```{r plotARCMen}
+net<-ggnetwork(n %s% which( n %v% "conference" == "ARC"), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2, arrow = arrow(length = unit(3, "points")))+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rating))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+
+
+```
+
 # Women
 
 ```{r womensRankings, include=FALSE}
@@ -82,7 +97,7 @@ source("NCAAD3WomenPullRandomWalker.R")
 
 
 ```{r setupWomen}
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+n<-network.initialize(length(all_teams), directed = TRUE, multiple = TRUE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
@@ -118,7 +133,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
   geom_edges(alpha=0.1)+
   geom_nodes( aes(color=rating), alpha=0.5 ) +theme_blank()+
   scale_color_gradient(low="purple", high="gold")#+
-#  geom_nodelabel_repel(aes(label=vertex.names))
+#  geom_nodetext(aes(label=vertex.names))
 
 ```
 
@@ -131,6 +146,21 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
   geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
   geom_nodes(  ) +theme_blank()+
   geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+
+
+```
+
+## ARC
+
+```{r plotARCWomen}
+net<-ggnetwork(n %s% which( n %v% "conference" == "ARC"), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2, arrow = arrow(length = unit(3, "points")))+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rating))+
   scale_color_gradient(low="purple", high="gold")+
   scale_fill_gradient(low="gold", high="purple")
 

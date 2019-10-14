@@ -1,5 +1,5 @@
 ---
-title: "Print Tables"
+title: "D3 Soccer Rankings for Post"
 author: "Matt Rissler, PhD"
 date: "April 25, 2017"
 output: html_document
@@ -10,39 +10,41 @@ knitr::opts_chunk$set(echo = TRUE, message =  FALSE)
 library(tidyverse)
 library(readr)
 library(stringr)
-old_date="2017 09 15"
-date="2017 09 19"
+old_date="2019 10 10"
+date="2019 10 14"
 ```
 
-#Men
+# Men
 
 ```{r Men, echo=FALSE, results="asis", warning=FALSE}
-Ranking <- read_csv(paste0("D3 Men Soccer RW",date,".csv"))
-oldRanking <- read_csv(paste0("D3 Men Soccer RW",old_date,".csv"))
+Ranking <- read_csv(paste0("2019 Rankings/D3 Men Soccer RW",date,".csv"))
+oldRanking <- read_csv(paste0("2019 Rankings/D3 Men Soccer RW",old_date,".csv"))
 names(Ranking) <- c("Rank", names(Ranking)[2:4])
 names(oldRanking) <- c("Rank", names(oldRanking)[2:4])
 
 
 Ranking <- left_join(Ranking,oldRanking,by=c("Team", "Conference")) %>% 
-  mutate(Rank.diff = Rank.y-Rank.x) %>%
-  select(Rank.x, Rank.diff,  Team, contains(".x")) %>%
+  mutate(Rank.diff = Rank.y-Rank.x, 
+         Rating.diff = Rating.x - Rating.y) %>%
+  select(Rank.x, Rank.diff,  Team, Conference, contains(".x"), Rating.diff) %>%
   rename( Rank=Rank.x, Rating=Rating.x)
 
 Ranking %>% head(25) %>% knitr::kable()
 
 ```
 
-#Women
+# Women
 
 ```{r Women, echo=FALSE, results="asis", warning=FALSE}
-Ranking <- read_csv(paste0("D3 Women Soccer RW",date,".csv"))
-oldRanking <- read_csv(paste0("D3 Women Soccer RW",old_date,".csv"))
+Ranking <- read_csv(paste0("2019 Rankings/D3 Women Soccer RW",date,".csv"))
+oldRanking <- read_csv(paste0("2019 Rankings/D3 Women Soccer RW",old_date,".csv"))
 names(Ranking) <- c("Rank", names(Ranking)[2:4])
 names(oldRanking) <- c("Rank", names(oldRanking)[2:4])
 
 Ranking <- left_join(Ranking,oldRanking,by=c("Team", "Conference")) %>% 
-  mutate(Rank.diff = Rank.y-Rank.x) %>%
-  select(Rank.x, Rank.diff,  Team, contains(".x")) %>%
+  mutate(Rank.diff = Rank.y-Rank.x, 
+         Rating.diff = Rating.x - Rating.y) %>%
+  select(Rank.x, Rank.diff,  Team, Conference, contains(".x"), Rating.diff) %>%
   rename( Rank=Rank.x, Rating=Rating.x)
 
 Ranking %>% head(25) %>% knitr::kable()

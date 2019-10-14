@@ -1,6 +1,6 @@
 ---
 title: "D3 soccer Rankings"
-date: "07 October, 2019"
+date: "14 October, 2019"
 output: 
   html_document: 
     keep_md: yes
@@ -18,7 +18,7 @@ output:
 
 
 ```r
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = FALSE)
+n<-network.initialize(length(all_teams), directed = TRUE, multiple = FALSE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
@@ -39,31 +39,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                        Rating  Conference 
 --------  -----------------------  ---------  -----------
-       1  Amherst                   8.363722  NESCAC     
-       2  Johns Hopkins             6.435379  CC         
-       3  Tufts                     5.772514  NESCAC     
-       4  Mary Washington           5.700787  CAC        
-       5  Calvin                    5.567140  MIAA       
-       6  Christopher Newport       5.543309  CAC        
-       7  Washington and Lee        5.418442  ODAC       
-       8  Covenant                  5.215679  USAC       
-       9  Roanoke                   5.193439  ODAC       
-      10  Franklin and Marshall     4.378234  CC         
-      11  Connecticut College       4.261961  NESCAC     
-      12  Middlebury                4.208395  NESCAC     
-      13  Oneonta State             3.983242  SUNYAC     
-      14  Catholic                  3.883375  LAND       
-      15  Gettysburg                3.874163  CC         
-      16  Chicago                   3.671766  UAA        
-      17  Ithaca                    3.641007  LL         
-      18  Hardin-Simmons            3.580379  ASC        
-      19  Rowan                     3.535411  NJAC       
-      20  Oglethorpe                3.503903  SAA        
-      21  Bates                     3.469974  NESCAC     
-      22  RPI                       3.463533  LL         
-      23  Claremont-Mudd-Scripps    3.314924  SCIAC      
-      24  Messiah                   3.301238  MACC       
-      25  Ohio Wesleyan             3.186408  NCAC       
+       1  Amherst                   7.431017  NESCAC     
+       2  Calvin                    5.826105  MIAA       
+       3  Christopher Newport       5.751827  CAC        
+       4  Johns Hopkins             5.614464  CC         
+       5  Washington and Lee        5.323713  ODAC       
+       6  Roanoke                   5.285110  ODAC       
+       7  Mary Washington           5.076001  CAC        
+       8  Franklin and Marshall     4.877566  CC         
+       9  Connecticut College       4.651006  NESCAC     
+      10  Oneonta State             4.465802  SUNYAC     
+      11  Oglethorpe                4.162531  SAA        
+      12  Chicago                   3.949507  UAA        
+      13  Covenant                  3.900098  USAC       
+      14  Messiah                   3.873689  MACC       
+      15  Tufts                     3.767652  NESCAC     
+      16  Catholic                  3.632685  LAND       
+      17  Rowan                     3.531120  NJAC       
+      18  Gettysburg                3.495813  CC         
+      19  Buffalo State             3.429783  SUNYAC     
+      20  Claremont-Mudd-Scripps    3.394567  SCIAC      
+      21  Middlebury                3.389944  NESCAC     
+      22  RPI                       3.353799  LL         
+      23  Gustavus Adolphus         3.239926  MIAC       
+      24  Ithaca                    3.229448  LL         
+      25  Centre                    3.141976  SAA        
 
 ```r
 rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -73,15 +73,15 @@ rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conf
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      28  Central              3.1409878  ARC        
-      32  Loras                3.0285347  ARC        
-      61  Luther               2.1806491  ARC        
-      73  Simpson              1.7211806  ARC        
-     141  Wartburg             1.0199542  ARC        
-     220  Dubuque              0.5287342  ARC        
-     235  Nebraska Wesleyan    0.4617576  ARC        
-     376  Coe                  0.0713437  ARC        
-     390  Buena Vista          0.0444160  ARC        
+      39  Loras                2.6838015  ARC        
+      45  Simpson              2.4777755  ARC        
+      47  Luther               2.4165509  ARC        
+      49  Central              2.3475013  ARC        
+     138  Dubuque              1.0825748  ARC        
+     139  Wartburg             1.0610626  ARC        
+     195  Nebraska Wesleyan    0.6670168  ARC        
+     364  Coe                  0.0934235  ARC        
+     383  Buena Vista          0.0573424  ARC        
 
 ```r
 rankedteams %>% filter(Team == "Loras")
@@ -89,7 +89,7 @@ rankedteams %>% filter(Team == "Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 3.028535        ARC      32
+## 1 Loras 2.683802        ARC      39
 ```
 
 ## Game Network
@@ -107,7 +107,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ![](PullAndNetwork_files/figure-html/plotNetwork-1.png)<!-- -->
 
 ```r
-#  geom_nodelabel_repel(aes(label=vertex.names))
+#  geom_nodetext(aes(label=vertex.names))
 ```
 
 
@@ -123,6 +123,22 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ```
 
 ![](PullAndNetwork_files/figure-html/plottop25Men-1.png)<!-- -->
+
+
+
+```r
+net<-ggnetwork(n %s% which( n %v% "conference" == "ARC"), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2, arrow = arrow(length = unit(3, "points")))+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rating))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+```
+
+![](PullAndNetwork_files/figure-html/plotARCMen-1.png)<!-- -->
+
 # Women
 
 
@@ -130,7 +146,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 
 
 ```r
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = TRUE)
+n<-network.initialize(length(all_teams), directed = TRUE, multiple = TRUE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
@@ -150,33 +166,33 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
 
 
- ranking  Team                      Rating  Conference 
---------  --------------------  ----------  -----------
-       1  Pomona-Pitzer          13.677916  SCIAC      
-       2  Messiah                12.195209  MACC       
-       3  Christopher Newport    10.482813  CAC        
-       4  Arcadia                10.162750  MACC       
-       5  Gettysburg              9.509140  CC         
-       6  MIT                     9.363117  NEWMAC     
-       7  William Smith           8.750692  LL         
-       8  Washington U.           8.738304  UAA        
-       9  Wheaton (Ill.)          8.159610  CCIW       
-      10  TCNJ                    7.917645  NJAC       
-      11  Johns Hopkins           7.541190  CC         
-      12  Chicago                 6.802198  UAA        
-      13  Tufts                   6.302403  NESCAC     
-      14  Centre                  6.275105  SAA        
-      15  Dickinson               5.770909  CC         
-      16  Geneseo State           5.762074  SUNYAC     
-      17  Washington and Lee      5.579075  ODAC       
-      18  Haverford               5.405032  CC         
-      19  McDaniel                4.914681  CC         
-      20  Middlebury              4.750553  NESCAC     
-      21  Chapman                 4.744196  SCIAC      
-      22  Stevens                 4.704247  MACF       
-      23  St. Thomas              4.369327  MIAC       
-      24  Swarthmore              4.150574  CC         
-      25  Randolph-Macon          4.036175  ODAC       
+ ranking  Team                         Rating  Conference 
+--------  -----------------------  ----------  -----------
+       1  Pomona-Pitzer             13.240923  SCIAC      
+       2  Arcadia                   12.936774  MACC       
+       3  Messiah                   12.894877  MACC       
+       4  MIT                       10.403120  NEWMAC     
+       5  William Smith              8.703038  LL         
+       6  Haverford                  7.994738  CC         
+       7  Tufts                      7.642647  NESCAC     
+       8  Washington U.              7.539948  UAA        
+       9  Johns Hopkins              7.468788  CC         
+      10  Wheaton (Ill.)             7.420427  CCIW       
+      11  TCNJ                       7.282450  NJAC       
+      12  Centre                     6.827830  SAA        
+      13  Gettysburg                 6.756363  CC         
+      14  Christopher Newport        6.369530  CAC        
+      15  Chicago                    5.929225  UAA        
+      16  Dickinson                  5.721778  CC         
+      17  Geneseo State              5.655945  SUNYAC     
+      18  Washington and Lee         5.407743  ODAC       
+      19  Middlebury                 5.286835  NESCAC     
+      20  Randolph-Macon             4.993194  ODAC       
+      21  Salisbury                  4.986745  CAC        
+      22  Claremont-Mudd-Scripps     4.931742  SCIAC      
+      23  Stevens                    4.818684  MACF       
+      24  McDaniel                   4.802097  CC         
+      25  Chapman                    4.628733  SCIAC      
 
 ```r
 rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -186,23 +202,23 @@ rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conf
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      33  Wartburg             3.3519998  ARC        
-      90  Nebraska Wesleyan    1.3623120  ARC        
-      94  Dubuque              1.3034897  ARC        
-      98  Loras                1.2710479  ARC        
-     149  Simpson              0.7595572  ARC        
-     177  Coe                  0.5109695  ARC        
-     194  Luther               0.4052699  ARC        
-     259  Central              0.2089984  ARC        
-     407  Buena Vista          0.0027065  ARC        
+      35  Wartburg             2.9299337  ARC        
+      84  Dubuque              1.5088050  ARC        
+      94  Loras                1.2744600  ARC        
+     101  Nebraska Wesleyan    1.1544314  ARC        
+     143  Simpson              0.7992554  ARC        
+     170  Coe                  0.5529437  ARC        
+     189  Luther               0.4267280  ARC        
+     211  Central              0.3517167  ARC        
+     416  Buena Vista          0.0016599  ARC        
 
 ```r
 rankedteams %>% filter(Team=="Loras")
 ```
 
 ```
-##    Team   Rating Conference ranking
-## 1 Loras 1.271048        ARC      98
+##    Team  Rating Conference ranking
+## 1 Loras 1.27446        ARC      94
 ```
 
 ## Game Network
@@ -220,7 +236,7 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ![](PullAndNetwork_files/figure-html/plotNetworkWomen-1.png)<!-- -->
 
 ```r
-#  geom_nodelabel_repel(aes(label=vertex.names))
+#  geom_nodetext(aes(label=vertex.names))
 ```
 
 
@@ -238,3 +254,19 @@ ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
 ```
 
 ![](PullAndNetwork_files/figure-html/plottop25Women-1.png)<!-- -->
+
+## ARC
+
+
+```r
+net<-ggnetwork(n %s% which( n %v% "conference" == "ARC"), layout="fruchtermanreingold")
+#net<-ggnetwork(n , layout="fruchtermanreingold")
+ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
+  geom_edges(aes(alpha=WinStrength), curvature = 0.2, arrow = arrow(length = unit(3, "points")))+
+  geom_nodes(  ) +theme_blank()+
+  geom_nodelabel_repel(aes(label=vertex.names, fill=rating))+
+  scale_color_gradient(low="purple", high="gold")+
+  scale_fill_gradient(low="gold", high="purple")
+```
+
+![](PullAndNetwork_files/figure-html/plotARCWomen-1.png)<!-- -->

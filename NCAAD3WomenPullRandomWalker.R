@@ -1,6 +1,7 @@
 library(rvest)
-library(dplyr)
+library(tidyverse)
 library(Matrix)
+
 
 teams <-read_html("http://www.d3soccer.com/teams/index-women")
 all_teams<-teams %>% html_nodes("td:nth-child(1) a") %>% html_text() 
