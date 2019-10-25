@@ -1,6 +1,6 @@
 ---
 title: "D3 soccer Rankings"
-date: "22 October, 2019"
+date: "24 October, 2019"
 output: 
   html_document: 
     keep_md: yes
@@ -39,31 +39,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                       Rating  Conference 
 --------  ----------------------  ---------  -----------
-       1  Amherst                  6.745163  NESCAC     
-       2  Christopher Newport      6.047967  CAC        
-       3  Johns Hopkins            5.951422  CC         
-       4  Calvin                   5.696552  MIAA       
-       5  Mary Washington          5.618356  CAC        
-       6  Washington and Lee       5.208367  ODAC       
-       7  Franklin and Marshall    4.539227  CC         
-       8  Tufts                    4.236362  NESCAC     
-       9  Oneonta State            4.104679  SUNYAC     
-      10  Messiah                  4.050696  MACC       
-      11  Oglethorpe               3.965092  SAA        
-      12  Covenant                 3.887012  USAC       
-      13  Gettysburg               3.823062  CC         
-      14  RPI                      3.783069  LL         
-      15  Chicago                  3.723566  UAA        
-      16  Roanoke                  3.701515  ODAC       
-      17  Connecticut College      3.277889  NESCAC     
-      18  Buffalo State            3.253406  SUNYAC     
-      19  Centre                   3.174304  SAA        
-      20  Catholic                 3.172489  LAND       
-      21  Ohio Wesleyan            3.162806  NCAC       
-      22  Montclair State          3.135101  NJAC       
-      23  Haverford                3.124062  CC         
-      24  Ithaca                   3.111308  LL         
-      25  Middlebury               3.069170  NESCAC     
+       1  Amherst                  6.689025  NESCAC     
+       2  Christopher Newport      6.468039  CAC        
+       3  Calvin                   5.932013  MIAA       
+       4  Johns Hopkins            5.503946  CC         
+       5  Franklin and Marshall    4.342208  CC         
+       6  Tufts                    4.240179  NESCAC     
+       7  Messiah                  4.126611  MACC       
+       8  Oneonta State            3.981761  SUNYAC     
+       9  Covenant                 3.980932  USAC       
+      10  Connecticut College      3.853494  NESCAC     
+      11  Oglethorpe               3.837695  SAA        
+      12  Gettysburg               3.805963  CC         
+      13  RPI                      3.742792  LL         
+      14  Eastern Connecticut      3.697283  LEC        
+      15  Mary Washington          3.659956  CAC        
+      16  Roanoke                  3.624121  ODAC       
+      17  Chicago                  3.579131  UAA        
+      18  Ohio Wesleyan            3.342203  NCAC       
+      19  Catholic                 3.280111  LAND       
+      20  Hobart                   3.204548  LL         
+      21  Washington and Lee       3.199828  ODAC       
+      22  Buffalo State            3.137836  SUNYAC     
+      23  Middlebury               3.115448  NESCAC     
+      24  Montclair State          3.012268  NJAC       
+      25  Ithaca                   3.009084  LL         
 
 ```r
 rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -73,15 +73,15 @@ rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conf
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      29  Loras                2.9448491  ARC        
-      41  Luther               2.5832320  ARC        
-      55  Central              2.1274190  ARC        
-      68  Simpson              1.8392863  ARC        
-     122  Wartburg             1.2610105  ARC        
-     175  Dubuque              0.8262250  ARC        
-     227  Nebraska Wesleyan    0.4834393  ARC        
-     351  Coe                  0.1220896  ARC        
-     391  Buena Vista          0.0455217  ARC        
+      29  Loras                2.8517674  ARC        
+      36  Luther               2.7843596  ARC        
+      56  Central              2.2406225  ARC        
+      71  Simpson              1.8058198  ARC        
+     119  Wartburg             1.2982037  ARC        
+     171  Dubuque              0.8863360  ARC        
+     226  Nebraska Wesleyan    0.5007302  ARC        
+     358  Coe                  0.1160074  ARC        
+     388  Buena Vista          0.0550588  ARC        
 
 ```r
 rankedteams %>% filter(Team == "Loras")
@@ -89,7 +89,7 @@ rankedteams %>% filter(Team == "Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 2.944849        ARC      29
+## 1 Loras 2.851767        ARC      29
 ```
 
 ## Game Network
@@ -168,31 +168,31 @@ rankedteams %>% filter(ranking <= 25) %>% select(ranking, Team, Rating, Conferen
 
  ranking  Team                         Rating  Conference 
 --------  -----------------------  ----------  -----------
-       1  Messiah                   13.286868  MACC       
-       2  Arcadia                   10.684429  MACC       
-       3  MIT                        9.580927  NEWMAC     
-       4  Pomona-Pitzer              9.379832  SCIAC      
-       5  Haverford                  8.127622  CC         
-       6  Johns Hopkins              8.024442  CC         
-       7  William Smith              7.519072  LL         
-       8  Centre                     7.422334  SAA        
-       9  TCNJ                       7.128627  NJAC       
-      10  Christopher Newport        7.095098  CAC        
-      11  Tufts                      6.679182  NESCAC     
-      12  Dickinson                  6.635610  CC         
-      13  Washington U.              6.490058  UAA        
-      14  Wheaton (Ill.)             6.320473  CCIW       
-      15  Cal Lutheran               5.904375  SCIAC      
-      16  Randolph-Macon             5.604036  ODAC       
-      17  Salisbury                  5.390860  CAC        
-      18  Washington and Lee         5.176458  ODAC       
-      19  Chicago                    5.142858  UAA        
-      20  Gettysburg                 5.129092  CC         
-      21  Claremont-Mudd-Scripps     5.062791  SCIAC      
-      22  Chapman                    4.617707  SCIAC      
-      23  McDaniel                   4.594391  CC         
-      24  Geneseo State              4.581179  SUNYAC     
-      25  Stevens                    4.363703  MACF       
+       1  Messiah                   13.784396  MACC       
+       2  Arcadia                   10.536546  MACC       
+       3  MIT                       10.200448  NEWMAC     
+       4  Pomona-Pitzer             10.170130  SCIAC      
+       5  Haverford                  7.629970  CC         
+       6  Johns Hopkins              7.476009  CC         
+       7  Christopher Newport        7.237915  CAC        
+       8  William Smith              7.237406  LL         
+       9  Centre                     7.077832  SAA        
+      10  Wheaton (Ill.)             6.676830  CCIW       
+      11  Tufts                      6.503351  NESCAC     
+      12  TCNJ                       6.298015  NJAC       
+      13  Dickinson                  6.259420  CC         
+      14  Washington U.              6.254584  UAA        
+      15  Claremont-Mudd-Scripps     5.882994  SCIAC      
+      16  Cal Lutheran               5.764427  SCIAC      
+      17  Randolph-Macon             5.299079  ODAC       
+      18  Salisbury                  5.275787  CAC        
+      19  Washington and Lee         5.225886  ODAC       
+      20  Chicago                    5.068664  UAA        
+      21  Chapman                    4.972396  SCIAC      
+      22  Gettysburg                 4.930993  CC         
+      23  McDaniel                   4.850411  CC         
+      24  Stevens                    4.419874  MACF       
+      25  Geneseo State              4.387209  SUNYAC     
 
 ```r
 rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conference) %>% knitr::kable()
@@ -202,15 +202,15 @@ rankedteams %>% filter(Conference=="ARC") %>% select(ranking, Team, Rating, Conf
 
  ranking  Team                    Rating  Conference 
 --------  ------------------  ----------  -----------
-      39  Wartburg             2.8020549  ARC        
-      89  Loras                1.3759627  ARC        
-      99  Dubuque              1.2346940  ARC        
-     137  Nebraska Wesleyan    0.8399977  ARC        
-     145  Simpson              0.7817894  ARC        
-     168  Coe                  0.5970546  ARC        
-     180  Luther               0.5314317  ARC        
-     233  Central              0.3008642  ARC        
-     424  Buena Vista          0.0012284  ARC        
+      37  Wartburg             2.8735461  ARC        
+      76  Loras                1.6826645  ARC        
+     111  Dubuque              1.0656399  ARC        
+     137  Nebraska Wesleyan    0.8501857  ARC        
+     140  Simpson              0.8135782  ARC        
+     158  Coe                  0.7052256  ARC        
+     169  Luther               0.5926716  ARC        
+     230  Central              0.3149520  ARC        
+     425  Buena Vista          0.0011140  ARC        
 
 ```r
 rankedteams %>% filter(Team=="Loras")
@@ -218,7 +218,7 @@ rankedteams %>% filter(Team=="Loras")
 
 ```
 ##    Team   Rating Conference ranking
-## 1 Loras 1.375963        ARC      89
+## 1 Loras 1.682664        ARC      76
 ```
 
 ## Game Network
