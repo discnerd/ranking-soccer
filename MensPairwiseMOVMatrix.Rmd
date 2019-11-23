@@ -11,25 +11,23 @@ library(tidyverse)
 library(Matrix)
 ```
 ```{r}
-load("2017 Rankings/Men2017 11 20.Rdata")
+load("2019 Rankings/Men2019 11 10.Rdata")
 source('C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-basketball/MarginPredictionFromCenter.R')
 
 A=sparseMatrix(seq(1,length(all_teams)),seq(1,length(all_teams)),x=0)
 b=rep(1,length(all_teams))
-#MOV of 4 is insurmountable
-P=matrix(c(1,-1/2,0,0,0,0,0,
-           -1/2,1,-1/2,0,0,0,0,
-           0,-1/2,1,-1/2,0,0,0,
-           0,0,-1/2,1,-1/2,0,0,
-           0,0,0,-1/2,1,-1/2,0,
-           0,0,0,0,-1/2,1,-1/2,
-           0,0,0,0,0,-1/2,1)
-         ,nrow=7)
-v=c(0,0,0,0,0,0,1/2)
+#MOV of 3 is insurmountable
+P=matrix(c(1,-1/2,0,0,0,
+           -1/2,1,-1/2,0,0,
+           0,-1/2,1,-1/2,0,
+           0,0,-1/2,1,-1/2,
+           0,0,0,-1/2,1)
+         ,nrow=5)
+v=c(0,0,0,0,1/2)
 shares<-solve(P,v)
 
 for(i in 1:length(all_results$Team1)){
-  if(abs(all_results[i,]$Score1-all_results[i,]$Score2)>=4){
+  if(abs(all_results[i,]$Score1-all_results[i,]$Score2)>=3){
     if(all_results[i,]$Score1>all_results[i,]$Score2){
       Share1<-1
       Share2<-0
@@ -38,7 +36,7 @@ for(i in 1:length(all_results$Team1)){
       Share1<-0
     }
   } else{
-    Share1<-shares[all_results[i,]$Score1-all_results[i,]$Score2+4]
+    Share1<-shares[all_results[i,]$Score1-all_results[i,]$Score2+3]
     Share2<-1-Share1
   }
   team1=match(all_results[i,]$Team1,all_teams)
@@ -100,13 +98,18 @@ rankedteams   %>%
 ```
 
 ```{r}
-bids <- 1
-indices <- c(259,  
-             66, 
-             37,
-             224
-             )
 
+library(readxl)
+library(tidyverse)
+SoccerD3MenTournament <- read_excel("C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-soccer/SoccerD3MenTournament.xlsx")
+tourneyTeams <- SoccerD3MenTournament %>% 
+  separate(Bracket, c("Region", "Spot"),1) %>% 
+  select(-`64`) %>% select(Team, Region, Spot) %>%
+  right_join(rankedteams) %>% filter(!is.na(Region)) %>%
+#     filter(Index %in% indices)) %>% 
+     mutate(Spot=as.integer(Spot)) %>% arrange(Region, Spot)
+bids <- 1
+indices <- tourneyTeams$Index
 #indices <- c(48,155,,,,,54,,,,,140,181,293,132,,)
 e <- b
 #e<-Re(eigen(t(A))$vectors[,1])
@@ -129,90 +132,97 @@ e <- b
 #   }
 # }
 #indices <-sort(indices)
-rankedteams   %>% 
-  
-  mutate(Ranking=min_rank(desc(Rating)))%>%
-  filter(Index %in% indices) %>%
-#  arrange( Index) %>% 
- # arrange( order(indices)) %>%
-  #mutate(Seed = row_number()) %>%  
-  select( Team, Ranking, Rating )  %>% 
-  knitr::kable()
+# rankedteams   %>% 
+#   
+#   mutate(Ranking=min_rank(desc(Rating)))%>%
+# #  filter(Index %in% indices) %>%
+# #  arrange( Index) %>% 
+#  # arrange( order(indices)) %>%
+#   #mutate(Seed = row_number()) %>%  
+#   select( Team, Ranking, Rating )  %>% 
+#   knitr::kable()
 ```
-```{r}
+```{r MOV, eval = FALSE}
+
+
 
 MOV=diag(rep(0,length(indices)))
+rownames(MOV) <-all_teams[indices]
+colnames(MOV) <-all_teams[indices]
 for( i in 1:(length(indices)-1)){
   for(j in (i+1):length(indices)){
-    MOV[i,j]= Predict_Margin(A_unnormed , c(0,shares,1), indices[j], indices[i], e)
+    MOV[i,j]= Predict_Margin_Meyer(A_unnormed , c(0,shares,1), indices[j], indices[i], e)
     cat(all_teams[indices[i]]," ", all_teams[indices[j]], ":", MOV[i,j], "\n")
     MOV[j,i]=-MOV[i,j]
   }
 }
 
+save(MOV, file="MensTournament1stRoundMOV.Rdata")
 
 ```
 
 
 
 
-```{r }
-rownames(MOV) <-all_teams[indices]
-colnames(MOV) <-all_teams[indices]
+```{r loadMOV}
+#rownames(MOV) <-all_teams[indices]
+#colnames(MOV) <-all_teams[indices]
 #print(xtable::xtable(MOV), type="html")
-MOV
-save(MOV, file="MensTournament3rdRoundMOV.Rdata")
+#MOV
 
+load("MensTournament1stRoundMOV.Rdata")
 ```
 
 ```{r pullBracketInfo}
-library(readxl)
-library(tidyverse)
-SoccerD3MenTournament <- read_excel("C:/Users/mr437799/Dropbox/Current/Data Projects/GitHub/ranking-soccer/SoccerD3MenTournament.xlsx")
-tourneyTeams<-SoccerD3MenTournament %>% separate(Bracket, c("Region", "Spot"),1) %>% select(-`62`) %>% select(Team, Region, Spot) %>% right_join(rankedteams %>% filter(Index %in% indices)) %>% filter(!is.na(Region))  %>% mutate(Spot=as.integer(Spot)) %>% arrange(Region, Spot)
+shares <- c(0, shares, 1)
 
-tourneyTeams <- tourneyTeams %>% mutate( Round3=rep(1,nrow(tourneyTeams))) 
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Round2 = rep(1, nrow(tourneyTeams) ) ) 
 
-# for(i in 1:length(tourneyTeams$Team)){
-#   if(tourneyTeams$Team[i] %in% c("North Park", "Tufts")){
-#     tourneyTeams$Round2[i] = 1
-#   } else{
-#     teams = tourneyTeams %>% 
-#       filter(Region == Region[i], 
-#              (Spot-1) %/%2 == (Spot[i]-1) %/%2 , 
-#              Team != Team[i]) %>%
-#       .$Team
-#     
-#     tourneyTeams$Round2[i] = 1
-#     for( team in teams){
-#       tourneyTeams$Round2[i] = tourneyTeams$Round2[i]*
-#         shares[length(shares)/2+1+
-#                  MOV[which(rownames(MOV)==team),
-#                      which(rownames(MOV)==tourneyTeams$Team[i])]]
-#     }
-#   }
-# }
-# 
-# 
-# for(i in 1:length(tourneyTeams$Team)){
-#   
-#   teams = tourneyTeams %>% 
-#     filter(Region == Region[i], 
-#            (Spot-1) %/%4 == (Spot[i]-1) %/%4 , 
-#            (Spot-1) %/%2 != (Spot[i]-1) %/%2,
-#            Team != Team[i]) %>%
-#     .$Team
-#   
-#   tourneyTeams$Round3[i] = 0
-#   for( team in teams){
-#     tourneyTeams$Round3[i] = tourneyTeams$Round3[i]+
-#       shares[length(shares)/2+1+
-#                MOV[which(rownames(MOV)==team),
-#                    which(rownames(MOV)==tourneyTeams$Team[i])]]*
-#       tourneyTeams$Round2[which(tourneyTeams$Team==team)]
-#   }
-#   tourneyTeams$Round3[i] = tourneyTeams$Round3[i]*tourneyTeams$Round2[i]
-# }
+for(i in 1:length(tourneyTeams$Team)){
+  
+    teams = tourneyTeams %>%
+      filter(Region == Region[i],
+             (Spot-1) %/%2 == (Spot[i]-1) %/%2 ,
+             Team != Team[i]) %>%
+      .$Team
+
+    tourneyTeams$Round2[i] = 1
+    for( team in teams){
+      tourneyTeams$Round2[i] = tourneyTeams$Round2[i]*
+        shares[(length(shares)-1)/2+1+
+                 MOV[which(rownames(MOV)==team),
+                     which(rownames(MOV)==tourneyTeams$Team[i])]]
+    }
+  
+}
+
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Round3 = rep(1, nrow(tourneyTeams) ) )
+
+
+for(i in 1:length(tourneyTeams$Team)){
+
+  teams = tourneyTeams %>%
+    filter(Region == Region[i],
+           (Spot-1) %/%4 == (Spot[i]-1) %/%4 ,
+           (Spot-1) %/%2 != (Spot[i]-1) %/%2,
+           Team != Team[i]) %>%
+    .$Team
+
+  tourneyTeams$Round3[i] = 0
+  for( team in teams){
+    tourneyTeams$Round3[i] = tourneyTeams$Round3[i]+
+      shares[(length(shares)-1)/2+1+
+               MOV[which(rownames(MOV)==team),
+                   which(rownames(MOV)==tourneyTeams$Team[i])]]*
+      tourneyTeams$Round2[which(tourneyTeams$Team==team)]
+  }
+  tourneyTeams$Round3[i] = tourneyTeams$Round3[i]*tourneyTeams$Round2[i]
+}
+
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Quarters = rep(1, nrow(tourneyTeams) ) )
 
 for(i in 1:length(tourneyTeams$Team)){
   
@@ -226,13 +236,16 @@ for(i in 1:length(tourneyTeams$Team)){
   tourneyTeams$Quarters[i] = 0
   for( team in teams){
     tourneyTeams$Quarters[i] = tourneyTeams$Quarters[i]+
-      shares[length(shares)/2+1+
+      shares[(length(shares)-1)/2+1+
                MOV[which(rownames(MOV)==team),
                    which(rownames(MOV)==tourneyTeams$Team[i])]]*
       tourneyTeams$Round3[which(tourneyTeams$Team==team)]
   }
   tourneyTeams$Quarters[i] = tourneyTeams$Quarters[i]*tourneyTeams$Round3[i]
 }
+
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Semis = rep(1, nrow(tourneyTeams) ) )
 
 for(i in 1:length(tourneyTeams$Team)){
   
@@ -245,13 +258,16 @@ for(i in 1:length(tourneyTeams$Team)){
   tourneyTeams$Semis[i] = 0
   for( team in teams){
     tourneyTeams$Semis[i] = tourneyTeams$Semis[i]+
-      shares[length(shares)/2+1+
+      shares[(length(shares)-1)/2+1+
                MOV[which(rownames(MOV)==team),
                    which(rownames(MOV)==tourneyTeams$Team[i])]]*
       tourneyTeams$Quarters[which(tourneyTeams$Team==team)]
   }
   tourneyTeams$Semis[i] = tourneyTeams$Semis[i]*tourneyTeams$Quarters[i]
 }
+
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Finals = rep(1, nrow(tourneyTeams) ) )
 
 for(i in 1:length(tourneyTeams$Team)){
   
@@ -274,6 +290,9 @@ for(i in 1:length(tourneyTeams$Team)){
   }
   tourneyTeams$Finals[i] = tourneyTeams$Finals[i]*tourneyTeams$Semis[i]
 }
+
+tourneyTeams <- tourneyTeams %>% 
+  mutate( Champs = rep(1, nrow(tourneyTeams) ) )
 
 for(i in 1:length(tourneyTeams$Team)){
   
@@ -300,8 +319,11 @@ for(i in 1:length(tourneyTeams$Team)){
 ```
 
 ```{r}
-tourneyTeams %>% select(-Region, -Spot, -Index, -Round3) %>% 
+tourneyTeams %>% select(-Region, -Spot, -Index) %>% 
   arrange(desc(Champs)) %>% knitr::kable()
+
+write.csv(tourneyTeams %>% select(-Region, -Spot, -Index) %>% 
+  arrange(desc(Champs)), file = "2019 Rankings/TournamentPredictionsBeforeFirstRound.csv")
 ```
 
 
@@ -310,7 +332,7 @@ tourneyTeams %>% select(-Region, -Spot, -Index, -Round3) %>%
 library(network)
 library(sna)
 library(ggnetwork)
-n<-network.initialize(length(all_teams), directed = FALSE, multiple = FALSE)
+n<-network.initialize(length(all_teams), directed = TRUE, multiple = FALSE)
 rankedteams <- rankedteams %>% mutate(ranking = min_rank(desc(Rating)))
 network.vertex.names(n) <- as.character(all_teams)
 n %v% "rank" <- arrange(rankedteams,match( Team, all_teams))$ranking
@@ -321,14 +343,15 @@ network.adjacency(as.matrix(A_unnormed), n, ignore.eval=FALSE, names.eval = c("W
 
 ```
 
-```{r plotField}
+```{r plotField, fig.width = 15, fig.height = 10}
 net<-ggnetwork(n %s% which( network.vertex.names(n) %in% tourneyTeams$Team), layout="fruchtermanreingold")
 #net<-ggnetwork(n , layout="fruchtermanreingold")
 ggplot(net, aes(x = x, y = y, xend = xend, yend = yend))+
   geom_edges(aes(alpha=WinStrength), curvature = 0.2)+
-  geom_nodes(aes(color=rank)  ) +theme_blank()+
-  #geom_nodelabel_repel(aes(label=vertex.names, fill=rank))+
-  scale_color_gradient(low="purple", high="gold")+
+  #geom_nodes(aes(color=rank)  ) +
+  theme_blank()+
+  geom_nodelabel(aes(label=vertex.names, fill=rating))+
+  #scale_color_gradient(low="purple", high="gold")+
   scale_fill_gradient(low="gold", high="purple")
 
 
